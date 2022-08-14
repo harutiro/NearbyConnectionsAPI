@@ -134,8 +134,9 @@ class MainActivity : ComponentActivity() {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
                     Log.d(TAG,"コネクションが確立した。今後通信が可能。")
+                    mainViewModel?.getConnectState = "コネクションが確立した"
 
-                    // コネクションが確立した。今後通信が可能。
+                    // コネクションが確立した。今後通信が可能。?
                     // 通信時にはendpointIdが必要になるので、フィールドに保持する。
                     mRemoteEndpointId = endpointId
                 }
@@ -263,6 +264,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Text(state)
+                    Text(viewModel.getConnectState)
                     Text(viewModel.getData)
 
                 }
@@ -289,6 +291,9 @@ class MainActivity : ComponentActivity() {
 
 class MainViewModel: ViewModel() {
     var getData: String by mutableStateOf("")
+        internal set
+
+    var getConnectState: String by mutableStateOf("")
         internal set
 }
 

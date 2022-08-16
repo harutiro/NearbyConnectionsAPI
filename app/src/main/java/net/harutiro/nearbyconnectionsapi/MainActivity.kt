@@ -6,17 +6,15 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.nearby.Nearby
@@ -134,6 +132,8 @@ class MainActivity : ComponentActivity() {
             when (result.status.statusCode) {
                 ConnectionsStatusCodes.STATUS_OK -> {
                     Log.d(TAG,"コネクションが確立した。今後通信が可能。")
+                    Log.d(TAG, endpointId)
+
                     mainViewModel?.getConnectState = "コネクションが確立した"
 
                     // コネクションが確立した。今後通信が可能。?
@@ -210,8 +210,8 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    fun datePush(){
-        val data = "Hello world".toByteArray()
+    fun datePush(text: String) {
+        val data = text.toByteArray()
         val payload = Payload.fromBytes(data)
 
         Nearby.getConnectionsClient(this)
@@ -253,9 +253,11 @@ class MainActivity : ComponentActivity() {
                         Text("データ送信待機")
                     }
 
+                    var text by remember { mutableStateOf("") }
+
                     Button(
                         onClick = {
-                            datePush()
+                            datePush(text)
                             state = "データ送信"
 
                         }
@@ -266,6 +268,23 @@ class MainActivity : ComponentActivity() {
                     Text(state)
                     Text(viewModel.getConnectState)
                     Text(viewModel.getData)
+
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp)
+
+                    ) {
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            label = { Text(text = "身長") },
+                            placeholder = { Text(text = "身長を入力してください") },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                    }
 
                 }
             }
